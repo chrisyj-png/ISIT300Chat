@@ -1,0 +1,8 @@
+node_modules/
+data/*.db
+certs/
+__MACOSX/
+ISIT-300-Chatbot/
+.DS_Store
+.env
+.env.*
