@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>REST dashboard</title>
+  <style>
+    body { max-width: 960px; margin: 40px auto; padding: 0 20px; font: 16px/1.5 system-ui, sans-serif; color: #172033; background: #f3f6fb; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    button { padding: 9px 14px; border: 0; border-radius: 6px; background: #465bd0; color: white; font: inherit; cursor: pointer; }
+    #posts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    article { padding: 18px; border: 1px solid #dce3ee; border-radius: 10px; background: white; }
+    article h2 { margin-top: 0; font-size: 1.15rem; text-transform: capitalize; }
+    .muted { color: #667085; }
+    .error { color: #a52e2e; }
+  </style>
+</head>
+<body>
+  <h1>REST dashboard</h1>
+  <p class="muted">Recent sample posts from JSONPlaceholder, a public API that does not require an API key.</p>
+  <div class="toolbar">
+    <p id="status" class="muted" role="status" aria-live="polite">Loading posts…</p>
+    <button id="reload" type="button">Reload</button>
+  </div>
+  <p id="error" class="error" role="alert" hidden></p>
+  <section id="posts" aria-label="Recent posts"></section>
+
+  <script>
+    const postsElement = document.querySelector('#posts')
+    const statusElement = document.querySelector('#status')
+    const errorElement = document.querySelector('#error')
+    const reloadButton = document.querySelector('#reload')
+    const postsUrl = 'https://jsonplaceholder.typicode.com/posts?_limit=8'
+
+    async function loadPosts() {
+      statusElement.textContent = 'Loading posts…'
+      errorElement.hidden = true
+      postsElement.replaceChildren()
+      reloadButton.disabled = true
+
+      try {
+        const response = await fetch(postsUrl)
+        if (!response.ok) {
+          throw new Error(`The API request failed (${response.status}).`)
+        }
+
+        const posts = await response.json()
+        if (!Array.isArray(posts)) {
+          throw new Error('The API response was not in the expected format.')
+        }
+
+        const cards = posts.map((post) => {
+          const article = document.createElement('article')
+          const title = document.createElement('h2')
+          title.textContent = post.title
+          const body = document.createElement('p')
+          body.textContent = post.body
+          const author = document.createElement('p')
+          author.className = 'muted'
+          author.textContent = `Sample user ${post.userId}`
+          article.append(title, body, author)
+          return article
+        })
+
+        postsElement.replaceChildren(...cards)
+        statusElement.textContent = `${posts.length} sample ${posts.length === 1 ? 'post' : 'posts'}`
+      } catch (requestError) {
+        statusElement.textContent = ''
+        errorElement.textContent = requestError instanceof Error
+          ? `${requestError.message} Check your connection and try again.`
+          : 'Could not load posts. Check your connection and try again.'
+        errorElement.hidden = false
+      } finally {
+        reloadButton.disabled = false
+      }
+    }
+
+    reloadButton.addEventListener('click', loadPosts)
+    loadPosts()
+  </script>
+</body>
+</html>

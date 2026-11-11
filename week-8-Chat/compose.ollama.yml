@@ -1,0 +1,42 @@
+services:
+  app:
+    environment:
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: gemma3:270m
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 20s
+  
+  ollama-init:
+    image: ollama/ollama:latest
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        if ollama list | grep -q "gemma3:270m"; then
+          echo "Gemma3 is already installed"
+        else
+          echo "Grabbing Gemma3"
+          ollama pull gemma3:270m
+        fi
+    restart: "no"
+
+volumes:
+  ollama_data:

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Forms lab</title>
+  <style>
+    body { max-width: 640px; margin: 40px auto; padding: 0 20px; font: 16px/1.5 system-ui, sans-serif; color: #172033; }
+    form { display: grid; gap: 14px; }
+    label { display: grid; gap: 5px; font-weight: 600; }
+    input, textarea, button { padding: 10px 12px; font: inherit; }
+    input, textarea { border: 1px solid #aeb8c7; border-radius: 6px; }
+    button { width: fit-content; border: 0; border-radius: 6px; background: #465bd0; color: white; cursor: pointer; }
+    #error { color: #a52e2e; }
+    #status { color: #276749; }
+  </style>
+</head>
+<body>
+  <h1>Forms lab</h1>
+  <p>Complete each field. This lab validates the form in your browser and does not send it to a server.</p>
+
+  <form id="contact-form" novalidate>
+    <label for="name">Name
+      <input id="name" name="name" type="text" autocomplete="name" required>
+    </label>
+    <label for="email">Email
+      <input id="email" name="email" type="email" autocomplete="email" required>
+    </label>
+    <label for="message">Message
+      <textarea id="message" name="message" rows="5" required></textarea>
+    </label>
+    <button type="submit">Submit</button>
+  </form>
+
+  <p id="error" role="alert" hidden></p>
+  <p id="status" role="status" aria-live="polite"></p>
+
+  <script>
+    const form = document.querySelector('#contact-form')
+    const nameInput = document.querySelector('#name')
+    const emailInput = document.querySelector('#email')
+    const messageInput = document.querySelector('#message')
+    const error = document.querySelector('#error')
+    const status = document.querySelector('#status')
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault()
+      error.hidden = true
+      status.textContent = ''
+
+      if (!nameInput.value.trim() || !emailInput.value.trim() || !messageInput.value.trim()) {
+        error.textContent = 'Please complete every field before submitting.'
+        error.hidden = false
+        form.querySelector(':invalid')?.focus()
+        return
+      }
+
+      if (!emailInput.validity.valid) {
+        error.textContent = 'Please enter a valid email address.'
+        error.hidden = false
+        emailInput.focus()
+        return
+      }
+
+      form.reset()
+      status.textContent = 'Thanks! The form is complete. This demo did not send your information.'
+    })
+  </script>
+</body>
+</html>

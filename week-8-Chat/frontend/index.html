@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Week 8 Notes</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <header class="page-header">
+      <p class="eyebrow">Week 8 Notes</p>
+      <h1>Your notes</h1>
+      <p class="intro">A simple notes app powered by the Hono API.</p>
+    </header>
+
+    <!-- The browser submits only the note body to the Hono API. -->
+    <form id="note-form" class="note-form">
+      <label for="note-body">Write a note</label>
+      <textarea id="note-body" name="body" rows="3" placeholder="What would you like to remember?" required></textarea>
+      <button type="submit">Add note</button>
+    </form>
+
+    <!-- Loading, result count, empty state, and request errors are updated by app.js. -->
+    <p id="status" class="status" role="status" aria-live="polite">Loading notes…</p>
+    <p id="error" class="error" role="alert" hidden></p>
+
+    <section aria-labelledby="notes-heading">
+      <div class="section-heading">
+        <h2 id="notes-heading">All notes</h2>
+      </div>
+      <p id="empty-state" class="empty-state" hidden>No notes yet. Add one above to get started.</p>
+      <!-- Note cards fetched from the API are inserted here. -->
+      <div id="notes-list" class="notes-grid"></div>
+    </section>
+  </main>
+</body>
+</html>
